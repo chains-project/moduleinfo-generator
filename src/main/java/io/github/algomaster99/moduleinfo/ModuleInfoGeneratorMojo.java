@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
+
 /**
  * Generates module-info.java from project dependencies
  */
@@ -52,6 +54,10 @@ public class ModuleInfoGeneratorMojo extends AbstractMojo {
 		Set<String> moduleNames = new TreeSet<>();
 
 		for (Artifact artifact : artifacts) {
+			// Skip runtime scope dependencies because they are not needed at compile time
+			if (SCOPE_RUNTIME.equals(artifact.getScope())) {
+				continue;
+			}
 			// Convert artifact name to module name
 			String depModuleName = convertToModuleName(artifact);
 			moduleNames.add(depModuleName);
